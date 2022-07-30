@@ -1,18 +1,28 @@
-// Do not expose your credentials in the code for Production Environment.
-let atlasDB = "mongodb+srv://appuser:xhFYadTL1HYRH1tU@cluster004m2022.aydiv.mongodb.net/inventory?retryWrites=true&w=majority";
+/*
+File Name - db.js
+Student Name - Ronak Barochia
+Student ID - 301239977
+*/
 
-// Database setup
+
+let DB_CONNECTION = "mongodb+srv://admin:admin@database.mxzco.mongodb.net/PortfolioDb"
+
+//database setup
 let mongoose = require('mongoose');
 
+
+
 module.exports = function(){
+    
+    //connect to DB
+    mongoose.connect(DB_CONNECTION);
 
-    mongoose.connect(atlasDB);
-    let mongoDb = mongoose.connection;
+    let mongoDB = mongoose.connection;
+    mongoDB.on('error', console.error.bind(console,'connection error :  '));
+    mongoDB.once('open',()=>{
+        console.log('conected to MongoDB...');
+    }) 
 
-    mongoDb.on('error', console.error.bind(console, 'Connection Error:'));
-    mongoDb.once('open', ()=>{
-        console.log('Connected to MongoDB...');
-    });
-
-    return mongoDb;
+    return mongoDB;
 }
+

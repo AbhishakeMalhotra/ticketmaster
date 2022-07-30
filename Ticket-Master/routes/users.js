@@ -1,15 +1,29 @@
+//Student Name - Ronak Barochia
+//Student ID - 301239977
 var express = require('express');
 var router = express.Router();
+let userController = require('../controllers/user')
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render(
-    'users', 
-    { 
-      title: 'Users',
-      userName: 'TicketMaster'  
-    }
-  );
-});
+
+router.get('/', userController.user);
+
+
+//user
+router.get('/ronakbarochia', userController.ronakbarochia);
+
+
+// login
+router.get('/login', userController.renderlogin);
+router.post('/login', userController.login);
+
+// register
+router.get('/register', userController.renderregister);
+router.post('/register', userController.register);
+
+
+router.get('/ContactList', userController.ContactList);
+
+//  logout
+router.get('/logout', userController.logout);
 
 module.exports = router;
