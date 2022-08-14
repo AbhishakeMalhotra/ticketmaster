@@ -3,7 +3,7 @@ let ConcertModel = require('../models/concert');
 
 module.exports.concertList = function(req, res, next) {  
 
-    ConcertModel.find((err, concertList) => {
+    ConcertModel.find((err, ConcertList) => {
         
         if(err)
         {
@@ -14,18 +14,41 @@ module.exports.concertList = function(req, res, next) {
             // console.log(concertList);
             res.render('concert/list', {
                 title: 'Concert List', 
-                ConcertList: concertList
+                ConcertList: ConcertList,
+                userName: req.user ? req.user.username : ''
             })            
         }
     });
 
 }
 
+// Gets a Concert by id and renders the details page.
+module.exports.details = (req, res, next) => {
+    
+    let id = req.params.id;
+
+    ConcertModel.findById(id, (err, ConcertToShow) => {
+        if(err)
+        {
+            console.log(err);
+            res.end(err);
+        }
+        else
+        {
+            //show the edit view
+            res.render('concert/details', {
+                title: 'Concert Details', 
+                Concert: ConcertToShow
+            })
+        }
+    });
+}
+
 
 module.exports.displayEditPage = (req, res, next) => {
     let id = req.params.id;
 
-    ConcertModel.findById(id, (err, itemToEdit) => {
+    ConcertModel.findById(id, (err, ConcertToEdit) => {
         if(err)
         {
             console.log(err);
@@ -35,8 +58,9 @@ module.exports.displayEditPage = (req, res, next) => {
         {
             //show the edit view
             res.render('concert/add_edit', {
-                title: 'Edit Item', 
-                item: itemToEdit
+                title: 'Edit Concert', 
+                Concert: ConcertToEdit,
+                userName: req.user ? req.user.username : ''
             })
         }
     });
@@ -46,22 +70,16 @@ module.exports.displayEditPage = (req, res, next) => {
 module.exports.processEditPage = (req, res, next) => {
     let id = req.params.id
 
-    let updatedItem = ConcertModel({
+    let updatedConcert = ConcertModel({
         _id: req.body.id,
-        item: req.body.item,
-        qty: req.body.qty,
-        status: req.body.status,
-        size : {
-            h: req.body.size_h,
-            w: req.body.size_w,
-            uom: req.body.size_uom,
-        },
-        tags: req.body.tags.split(",").map(word => word.trim())
+        name: req.body.name,
+        state: req.body.state,
+        price: req.body.price
     });
 
-    // console.log(updatedItem);
+    // console.log(updatedConcert);
 
-    ConcertModel.updateOne({_id: id}, updatedItem, (err) => {
+    ConcertModel.updateOne({_id: id}, updatedConcert, (err) => {
         if(err)
         {
             console.log(err);
@@ -69,8 +87,6 @@ module.exports.processEditPage = (req, res, next) => {
         }
         else
         {
-            // console.log(req.body);
-            // refresh the book list
             res.redirect('/concert/list');
         }
     });
@@ -78,30 +94,25 @@ module.exports.processEditPage = (req, res, next) => {
 
 
 module.exports.displayAddPage = (req, res, next) => {
-    let newItem = ConcertModel();
+    let newConcert = ConcertModel();
 
     res.render('concert/add_edit', {
-        title: 'Add a new Item',
-        item: newItem
+        title: 'Add a new Concert',
+        Concert: newConcert,
+        userName: req.user ? req.user.username : ''
     })          
 }
 
 module.exports.processAddPage = (req, res, next) => {
 
-    let newItem = ConcertModel({
+    let newConcert = ConcertModel({
         _id: req.body.id,
-        item: req.body.item,
-        qty: req.body.qty,
-        status: req.body.status,
-        size : {
-            h: req.body.size_h,
-            w: req.body.size_w,
-            uom: req.body.size_uom,
-        },
-        tags: req.body.tags.split(",").map(word => word.trim())
+        name: req.body.name,
+        state: req.body.state,
+        price: req.body.price
     });
 
-    ConcertModel.create(newItem, (err, item) =>{
+    ConcertModel.create(newConcert, (err, Concert) =>{
         if(err)
         {
             console.log(err);
@@ -110,7 +121,7 @@ module.exports.processAddPage = (req, res, next) => {
         else
         {
             // refresh the book list
-            console.log(item);
+            console.log(Concert);
             res.redirect('/concert/list');
         }
     });

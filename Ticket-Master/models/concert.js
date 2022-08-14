@@ -4,18 +4,12 @@ let mongoose = require('mongoose');
 // Create a model class
 let concertModel = mongoose.Schema(
     {
-        item: String,
-        qty: Number,
-        tags: [],
-        status: String,
-        size: {
-            h: Number,
-            w: Number,
-            uom: String
-        }
+        name: String,
+        state: String,
+        price: Number,
     },
     {
-        collection: "concert"
+        collection: "Concert"
     }
 );
 

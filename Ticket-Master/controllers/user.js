@@ -1,138 +1,97 @@
-/*
-File Name - user.js
-Student Name - Ronak Barochia
-Student ID - 301239977
-*/
-
-const inventory = require('../models/inventory');
 let User = require('../models/user');
 let passport = require('passport');
 
-exports.user = function(req, res, next) {
-    res.render('user', { 
-        title: 'Users',
-        name: 'Student'
-    });
-}
-
-exports.ronakbarochia = function(req, res, next) {
-    res.render('user', { 
-        title: 'User',
-        name: 'ronakbarochia'
-    });
-}
-
-//error page
-
 function getErrorMessage(err) {
-    console.log("--> Erro: " + err);
-    let message = '';
-  
-    if (err.code) {
-      switch (err.code) {
-        case 11000:
-        case 11001:
-          message = 'Username already exists';
-          break;
-        default:
-          message = 'Something went wrong';
-      }
-    } else {
-      for (var errName in err.errors) {
-        if (err.errors[errName].message) message = err.errors[errName].message;
-      }
+  console.log("===> Erro: " + err);
+  let message = '';
+
+  if (err.code) {
+    switch (err.code) {
+      case 11000:
+      case 11001:
+        message = 'Username already exists';
+        break;
+      default:
+        message = 'Something went wrong';
     }
-  
-    return message;
-  };
-
-  // render register page
-  module.exports.renderregister = function(req, res, next) {
-    if (!req.user) {
-  
-      // creates a empty new user object.
-      let newUser = User();
-  
-      res.render('auth/register', {
-        title: 'Register Here',
-        messages: req.flash('error'),
-        user: newUser
-      });
-  
-    } else {
-      return res.redirect('/');
+  } else {
+    for (var errName in err.errors) {
+      if (err.errors[errName].message) message = err.errors[errName].message;
     }
-  };
+  }
 
-  //registration 
-module.exports.register = function(req, res, next) {
-    if (!req.user) {
-      console.log(req.body);
-  
-      let user = new User(req.body);
+  return message;
+};
 
-      console.log(user);
-  
-      user.save((err) => {
-        if (err) {
-          let message = getErrorMessage(err);
-  
-          req.flash('error', message);
-          // return res.redirect('/users/signup');
-          return res.render('auth/register', {
-            title: 'Register Here',
-            messages: req.flash('error'),
-            user: user
-          });
-        }
-        return res.redirect('/users/login');
-        // req.login(user, (err) => {
-        //   if (err) return next(err);
-        //   return res.redirect('/');
-        // });
-      });
-    } else {
-      return res.redirect('/users/login');
-    }
-  };
-
-//render login page
-  
-  module.exports.renderlogin = function(req, res, next) {
-    if (!req.user) {
-      res.render('auth/login', {
-        title: 'Login',
-        messages: req.flash('error') || req.flash('info')
-      });
-    } else {
-      console.log(req.user);
-      return res.redirect('/inventory/list');
-    }
-  };
-
-  module.exports.ContactList = function(req, res, next) {
-   
-      res.render('index', { title: 'ContactList' });
-  
-}
- 
-
-//login
-module.exports.login = function(req, res, next){
-    passport.authenticate('local', {   
-      successRedirect: req.session.url || '/inventory/list',
-      failureRedirect: '/users/login',
-      failureFlash: true
-    })(req, res, next);
-    delete req.session.url;
-  } 
-
-//logout 
-  module.exports.logout = function(req, res, next) {
-    req.logout(function(err) {
-        if (err) { return next(err); }
-        res.redirect('/');
+module.exports.renderSignin = function(req, res, next) {
+  if (!req.user) {
+    res.render('auth/signin', {
+      title: 'Sign-in Form',
+      messages: req.flash('error') || req.flash('info')
     });
-  };
+  } else {
+    console.log(req.user);
+    return res.redirect('/home');
+  }
+};
 
-//signin
+module.exports.renderSignup = function(req, res, next) {
+  if (!req.user) {
+
+    // creates a empty new user object.
+    let newUser = User();
+
+    res.render('auth/signup', {
+      title: 'Sign-up Form',
+      messages: req.flash('error'),
+      user: newUser
+    });
+
+  } else {
+    return res.redirect('/home');
+  }
+};
+
+module.exports.signup = function(req, res, next) {
+  if (!req.user && req.body.password === req.body.password_confirm) {
+    console.log(req.body);
+
+    let user = new User(req.body);
+    user.provider = 'local';
+    console.log(user);
+
+    user.save((err) => {
+      if (err) {
+        let message = getErrorMessage(err);
+
+        req.flash('error', message);
+        return res.render('auth/signup', {
+          title: 'Sign-up Form',
+          messages: req.flash('error'),
+          user: user
+        });
+      }
+      req.login(user, (err) => {
+        if (err) return next(err);
+        return res.redirect('/home');
+      });
+    });
+  } else {
+    return res.redirect('/home');
+  }
+};
+
+module.exports.signout = function(req, res, next) {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    res.redirect('/');
+});
+};
+module.exports.signin = function(req, res, next){
+  passport.authenticate('local', {   
+    successRedirect: req.session.url || '/home',
+    failureRedirect: '/users/signin',
+    failureFlash: true
+  })(req, res, next);
+  delete req.session.url;
+}

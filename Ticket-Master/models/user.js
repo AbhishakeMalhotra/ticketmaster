@@ -1,8 +1,3 @@
-/*
-File Name - user.js
-Student Name - Ronak Barochia
-Student ID - 301239977
-*/
 
 let mongoose = require('mongoose');
 let crypto = require('crypto');
@@ -19,9 +14,8 @@ let UserSchema = mongoose.Schema(
         username: {
             type: String,
             unique: true,
-            required: 'Username cannot be blank',
-            trim: true,
-            
+            required: 'Username is required',
+            trim: true
         },
         password: {
             type: String,
@@ -29,8 +23,19 @@ let UserSchema = mongoose.Schema(
                 return password && password.length > 6;
             }, 'Password should be longer']
         },
-        salt: String,
-        
+        salt: {
+            type: String
+        },
+        provider: {
+            type: String,
+            required: 'Provider is required'
+        },
+        providerId: String,
+        providerData: {},
+        created: {
+            type: Date,
+            default: Date.now
+        }
     },
     {
         collection: "user"
@@ -72,5 +77,29 @@ UserSchema.methods.hashPassword = function(password) {
 UserSchema.methods.authenticate = function(password) {
     return this.password === this.hashPassword(password);
 };
+
+UserSchema.statics.findUniqueUsername = function(username, suffix,
+    callback) {
+    var possibleUsername = username + (suffix || '');
+    this.findOne({
+        username: possibleUsername
+    }, (err, user) => {
+        if (!err) {
+            if (!user) {
+                callback(possibleUsername);
+            } else {
+                return this.findUniqueUsername(username, (suffix || 0) +
+                    1, callback);
+            }
+        } else {
+            callback(null);
+        }
+    });
+};
+
+UserSchema.set('toJSON', {
+    getters: true,
+    virtuals: true
+});
 
 module.exports = mongoose.model('user', UserSchema);

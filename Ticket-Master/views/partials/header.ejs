@@ -37,7 +37,12 @@
       </li>
 
       <li class="nav-item" style="margin-right: 50px;">
-        <a class="nav-link" href="/"><i class="fas fa-home"></i> Home </a>
+        <% if (title == "Home") { %>
+        <a class="nav-link active" href="/home">
+    <% } else { %>
+        <a class="nav-link" href="/home">
+    <% } %>   
+        <i class="fas fa-home"></i> Home </a>
       </li>
       <li class="nav-item dropdown"style="margin-right: 50px;">
         <% if (title == "Concerts List" || title == "Add a new Concert") { %>
@@ -70,7 +75,14 @@
         <% } %>
             <i class="fa fa-phone"></i> Contact  </a>
         </a>
-    </li>
+        <li class="nav-item">  
+          <% if (typeof userName == 'string' && userName) { %>
+            <a class="nav-link" href="/users/signout" onclick="return confirm('Are you sure?')"><i class="fa fa-door-open"></i> Sign-Out (<%= userName %>)</a>
+          <% } else { %>
+            <a class="nav-link" href="/users/signin"><i class="fa fa-door-closed"></i> Sign-in</a>
+          <% } %>            
+        </li>  
+
     </ul>
   </div>
   </nav>

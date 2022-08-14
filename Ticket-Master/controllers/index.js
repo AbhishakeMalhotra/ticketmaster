@@ -1,27 +1,19 @@
-/*
-File Name - index.js
-Student Name - Ronak Barochia
-Student ID - 301239977
-*/
-
-
 
 exports.home = function(req, res, next) {
-    res.render('index', { title: 'Home' });
+    res.render('index', { title: 'Home',
+    userName: req.user ? req.user.username : '' });
 }
 
-exports.projects = function(req, res, next) {
-    res.render('index', { title: 'Projects' });
+exports.concert = function(req, res, next){
+    res.render('index', { title: 'Concert',
+    userName: req.user ? req.user.username : '' });
 }
-
+ 
 exports.about = function(req, res, next) {
-    res.render('index', { title: 'About' });
+    res.render('index', { title: 'About',
+    userName: req.user ? req.user.username : '' });
 }
-
-exports.services = function(req, res, next) {
-    res.render('index', { title: 'Services' });
-}
-
 exports.contact = function(req, res, next) {
-    res.render('index', { title: 'Contact Me' });
+    res.render('index', { title: 'Contact Me',
+    userName: req.user ? req.user.username : '' });
 }

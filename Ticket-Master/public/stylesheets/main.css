@@ -7,8 +7,7 @@ Student ID - 301239977
 /*body*/
 
 body {
-    overflow-y: scroll;
-    scroll-behavior: auto; 
+  overflow-x: hidden;
     position: relative;
     font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
     color: #000000;

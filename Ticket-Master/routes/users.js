@@ -1,29 +1,19 @@
-//Student Name - Ronak Barochia
-//Student ID - 301239977
+
 var express = require('express');
 var router = express.Router();
-let userController = require('../controllers/user')
+let usersController = require('../controllers/user')
+let passport = require('passport');
 
 
-router.get('/', userController.user);
+// Routes for sign-up
+router.get('/signup', usersController.renderSignup);
+router.post('/signup', usersController.signup);
 
+// Routes for sign-in
+router.get('/signin', usersController.renderSignin);
+router.post('/signin', usersController.signin);
 
-//user
-router.get('/ronakbarochia', userController.ronakbarochia);
-
-
-// login
-router.get('/login', userController.renderlogin);
-router.post('/login', userController.login);
-
-// register
-router.get('/register', userController.renderregister);
-router.post('/register', userController.register);
-
-
-router.get('/ContactList', userController.ContactList);
-
-//  logout
-router.get('/logout', userController.logout);
+// Route for sign-out
+router.get('/signout', usersController.signout);
 
 module.exports = router;

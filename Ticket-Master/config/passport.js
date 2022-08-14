@@ -1,8 +1,4 @@
-/*
-File Name - passport.js
-Student Name - Ronak Barochia
-Student ID - 301239977
-*/
+
 const passport = require('passport');
 
 module.exports = function() {

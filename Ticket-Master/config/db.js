@@ -5,7 +5,7 @@ Student ID - 301239977
 */
 
 
-let DB_CONNECTION = "mongodb+srv://admin:admin@database.mxzco.mongodb.net/PortfolioDb"
+let DB_CONNECTION = "mongodb+srv://user:user@ticketmaster.wjjned4.mongodb.net/test"
 
 //database setup
 let mongoose = require('mongoose');
